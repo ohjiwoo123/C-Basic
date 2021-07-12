@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <string.h>
+
+struct Data {
+	long int msg_type;
+	char name[10];
+	int kor;
+	int eng;
+	int math;
+	int science;
+	int avg;
+	int total;
+};
+
+
+int main(void) {
+
+	// 메모리 크기 할당
+	char buff[30];
+
+	// 구조체 선언
+	struct Data st;
+
+	// 구조체 객체 초기화\
+	// test.csv 파일을 생성한다. 
+	memset(&st, 0, sizeof(st));
+
+	FILE* fp = fopen("test.csv", "r");
+
+	// read.csv
+	fgets(buff, sizeof(buff), fp);
+
+	// strok : 문자열에서 ','를 기준으로 나눈다.
+	char* ptr = strtok(buff, ",");
+	strcpy(&st, st.name, ptr);
+
+	*ptr = strok(NULL, ",");
+	printf("%s\n,ptr");
+}

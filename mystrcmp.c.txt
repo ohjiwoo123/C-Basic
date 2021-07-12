@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <string.h>
+
+int mystrcmp(char s[], char t[]); // mystrcmp 함수 선언
+
+int main(void) {
+
+	// 변수 선언
+	char s[100];
+	char t[100];
+
+	int i = 0;
+	int j = 0;
+	int result;
+
+	printf("사전 순위를 비교할 첫 번째 단어를 입력하세요: ");
+	while ((s[i++] = getchar()) != '\n'); // null 문장 
+	s[--i] = '\0';
+	printf("사전 순위를 비교할 두 번째 단어를 입력하세요: ");
+	while ((t[j++] = getchar()) != '\n'); // null 문장 
+	t[--j] = '\0';
+
+	result = mystrcmp(s, t); // mystrcmp 함수 콜 
+
+	printf("%d\n", result);
+
+	if (result == 1)
+		printf("두 번째 단어가 사전에 먼저 나옵니다.\n");
+	if (result == 0)
+		printf("두 단어가 같습니다.\n");
+	if (result == -1)
+		printf("첫 번째 단어가 사전에 먼저 나옵니다.\n");
+
+	return 0;
+}
+
+
+int mystrcmp(char s[], char t[])
+{
+	int result = 0;
+	int i;
+
+	int cmp_len = strlen(s) < strlen(t) ? strlen(t) : strlen(s);
+
+	for (i = 0; i <= cmp_len; i++)
+	{
+		if (s[i] < t[i])
+		{
+			result = -1;
+			break;
+		}
+		else if (s[i] > t[i])
+		{
+			result = 1;
+			break;
+		}
+		else
+			result = 0;
+	}
+
+	return result;
+}

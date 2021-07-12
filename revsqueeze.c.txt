@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#define MAX 100
+
+
+// 주어진 문자열에서 또 다른 주어진 문자를 제거하고 압축한 후에,
+// 역 순화 시킨 문자열을 만들어주는 함수 revsqueeze(s,c)를 만드시오.
+// ex) abcabc b (입력) -> caca(출력) 
+
+// revsqueeze 함수 선언
+
+char* Revsq(char* pstr,char c);
+
+int main_loop(void) {
+
+	char str[MAX]; // 문자열이 입력 될 배열.
+	char s;	// getchar로 받을 변수
+	char c;	// 제거하기 원하는 문자.
+	int cnt = 0;	// => 배열의 인덱스.
+
+	char* result;
+
+		puts("문자열을 쓰고 제거할 문자를 입력하세요.");
+		while ((s = getchar()) != '\n')
+		{
+			if (s == ' ') {
+				s = getchar();
+				c = s;
+			}
+			else
+				str[cnt] = s;
+			cnt++;
+		}
+		str[--cnt] = '\0'; // 마지막 NULL 입력
+		// printf("str = %s c = %c\n",str,c);
+		result = Revsq(str, c); // revsq해준 값을 받는 결과 변수.
+		printf("\n%s\n", result);
+		return 0;
+}
+
+/*
+RevsQueeze 함수 
+1. c를 제거한다
+2. 거꾸로 저장.
+*/
+
+char* Revsq(char* pstr, char c) {
+	int cnt = strlen(pstr)+1; // ex) str="abc" strl=3, cnt=4
+	int j = 0;
+	char* temp = (char*)malloc(strlen(pstr) + 1);  //새로운 문자열이 저장될 포인터.temp의 유동적 메모리 할당
+	for (; cnt >= 2; cnt--) { // ex) cnt = 4..3..2..
+		if (*(pstr + cnt - 2) != c) // *(pstr(0)+cnt(4)-2)='c'(인덱스가 2인 세번째 요소.)
+			*(temp + j++) = *(pstr + cnt - 2);
+		else
+			continue;
+	}
+	*(temp + j) = '\0';
+	return temp;
+}

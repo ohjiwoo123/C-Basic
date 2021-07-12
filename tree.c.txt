@@ -1,0 +1,259 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h> 
+
+#include <stdlib.h> 
+
+
+
+struct tnode {
+
+    int item;		/* number */
+
+    struct tnode* left;	/* left child */
+
+    struct tnode* right;	/* right child */
+
+};
+
+
+struct tnode* addtree(struct tnode*, int);  // addtree 함수
+
+void deletetree(struct tnode **, int);  // deletetree 함수 
+
+void treeprint(struct tnode*);  // treeprint 함수 (중위 순회)
+
+
+main()
+
+{
+
+    struct tnode* root;
+
+    int cond;
+    
+    int num;
+
+    root = NULL;  // 초기화 
+
+    while (1) {
+
+        printf("1 : 삽입   2 : 삭제   3 : 출력   4 : 종료\n");
+
+        scanf("%d", &cond);
+
+        if (cond == 1) {
+
+            printf("Add Number\n");
+
+            scanf("%d", &num);
+
+            root = addtree(root, num);
+
+        }
+
+        else if (cond == 2) { 
+
+                printf("Delete Number\n");
+
+                scanf("%d", &num);
+
+                deletetree(&root, num); 
+
+         } 
+
+        else if (cond == 3)
+        {
+            treeprint(root);
+        }
+
+        else if (cond == 4)
+        {
+            break;
+        }
+
+        else {
+
+            printf("Wrong Input\n");
+
+            exit(1);
+
+        }
+
+    }
+
+    return 0;
+
+}
+
+struct tnode* addtree(struct tnode* p, int num)
+
+{
+
+    if (p == NULL) {
+
+        p = (struct tnode*)malloc(sizeof(struct tnode));
+
+        p->item = num;
+
+        p->left = p->right = NULL;
+
+    }
+
+    else if (num == p->item)
+
+        printf("존재하는 숫자 입니다\n");
+
+    else if (num < p->item)
+
+        p->left = addtree(p->left, num);
+
+    else
+
+        p->right = addtree(p->right, num);
+
+    return p;
+
+}
+
+
+
+// 중위 순회 
+
+void treeprint(struct tnode* p)
+
+{
+    if (p != NULL) {
+
+        treeprint(p->left);
+
+        printf("%d\n", p->item);
+
+        treeprint(p->right);
+
+    }
+
+}
+
+
+void deletetree(struct tnode** root, int num)
+
+{
+
+    struct tnode* prev, * deleted, * parent, * move;
+
+    prev = parent = move = NULL;
+
+    deleted = *root;
+
+
+
+    while (deleted) {           // 삭제 할 숫자 찾으러 가는 부분 
+
+        if (num == deleted->item)   // 삭제를 입력한 숫자와 입력된 데이터 값이 같은 경우 
+
+            break;  // while문 빠져나온다.
+
+        else if (num < deleted->item) {     // 삭제를 입력한 숫자 <<< 입력된 데이터 값 인 경우 , if 왼쪽서브트리문을 수행할 예정.  
+
+            prev = deleted;
+
+            deleted = deleted->left;
+
+        }
+
+        else {  // 삭제를 입력한 숫자 >>>> 입력된 데이터 값 인 경우 , if 오른쪽서브트리문을 수행할 예정.
+
+            prev = deleted;
+
+            deleted = deleted->right;
+
+        }
+
+    }
+
+
+
+    if (deleted == NULL) {      // 노드에 입력 된 데이터 이외의 값을 입력하는 경우
+
+        printf("삭제 하고자 하는 숫자가 존재 하지 않습니다\n");
+
+        exit(1);
+
+    }
+
+
+
+    if (deleted->left) {   //왼쪽 서브 트리에서 조정 하는 경우 
+        
+        parent = deleted; // parent 변수의 기준
+
+        move = deleted->left; // move 변수의 기준, parent에서 왼쪽 자식에게 접근
+
+        while (move->right) // 삭제 트리 기준 왼쪽 서브 트리 중 가장 큰 숫자
+        {
+            parent = move; // move 주소를 parent 주소에 대입
+            move = move->right; // move 노드를 move의 오른쪽 노드 주소로 변경 
+
+        }
+
+        if (parent == deleted) // (move노드의 오른쪽이 없는 경우)
+         {
+            parent->left = move->left; // 왼쪽노드가 새로운 parent이고 삭제될 부분을 대체한다.
+        }
+        else    // 그외의 경우 (오른쪽 노드가 있는 경우)
+        {
+            parent->right = move->left; // 오른쪽 노드가 새로운 parent이고 삭제될 부분을 대체한다.
+        }
+        deleted->item = move->item; //  새로운 parent 데이터를 노드에 copy한다 
+        free(move); // copy한 move 숫자말고 기존의 원본 move 숫자 제거 
+    }
+
+    else  if (deleted->right) // 오른쪽 서브 트리에서 조정 
+    {
+
+        parent = deleted; // parent 변수 기준
+       
+        move = deleted->right; // move 변수의 기준 
+
+        while (move->left) // 삭제 트리 기준 오른쪽 서브 트리 중 가장 작은 숫자 
+        {
+            parent = move;  // move가 parent가 된다.
+            move = move->left; // move를 왼쪽자식으로 바꾼다.
+        }
+        if (parent == deleted)
+        {
+            parent->right = move->right; 
+        }
+        else
+        {
+            parent->left = move->right; 
+        }
+        deleted->item = move->item;
+        free(move);
+    }
+
+    else  if (prev == NULL) {  // 마지막으로 하나 남은 노드 삭제 일 경우  
+
+        free(deleted);
+
+        *root = NULL;    // 공백 트리가 되었음을 알려 주는 부분  
+
+    }
+    else if (deleted == prev->left) {  // 왼쪽 단말 노드 삭제일 경우 
+
+        prev->left = NULL;
+
+        free(deleted);
+
+    }
+
+    else  if (deleted == prev->right) { // 오른쪽 단말 노드 삭제일 경우 
+
+        prev->right = NULL;
+
+        free(deleted);
+
+    }
+
+}
+
